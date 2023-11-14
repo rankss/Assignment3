@@ -22,11 +22,6 @@ anopheles.Frequency <- anopheles[, c("species_name", "country")] %>%
     count(country)
 
 malaria.Frequency <- malaria[malaria$IsLatestYear == TRUE, c("Location", "FactValueNumeric")]
-## To ensure that only locations with positive cases is true as when I initially ran it, it only showed me some, not all continents/ country groupings with positive cases. This is an extra step but this way, I was able to confirm it by checking afterwards.
-malaria.positive <-filter(malaria, IsLatestYear == "true") 
-malaria.Frequency <- malaria.positive[, c("Location", "FactValueNumeric")]
-View(malaria.Frequency)
-
 
 # Change column names
 colnames(plasmodium.Frequency) <- c("country", "plasmodium")
