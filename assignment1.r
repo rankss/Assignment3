@@ -23,6 +23,11 @@ anopheles.Frequency <- anopheles[, c("species_name", "country")] %>%
 
 malaria.Frequency <- malaria[malaria$IsLatestYear == TRUE, c("Location", "FactValueNumeric")]
 
+## Compiled this to immediately show cases of malaria with more than 0 as the fact value numeric
+malaria.Frequency2 <- malaria[malaria$IsLatestYear == TRUE, c("Location", "FactValueNumeric")] %>% 
+  + filter(FactValueNumeric >0)
+
+
 # Change column names
 colnames(plasmodium.Frequency) <- c("country", "plasmodium")
 colnames(anopheles.Frequency) <- c("country", "anopheles")
