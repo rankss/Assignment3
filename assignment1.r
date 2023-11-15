@@ -61,6 +61,29 @@ plot_ly(total.Frequency.Continent) %>%
     add_pie(total.Frequency.Continent, labels=~continent, values=~anopheles, sort=FALSE,
             domain=list(x=c(0.34, 0.66), y=c(0.34, 0.66)))
 
+library(ggplot2)
+
+# Create the data frame of frequencies from each genus and their respective continents. 
+Continent_data <- data.frame(
+  continent = c("Africa", "Americas", "Asia", "Oceania"),
+  malaria = c(163875665, 524158, 1247499, 736424),
+  plasmodium = c(178, 190, 375, 278),
+  anopheles = c(1813, 3847, 2916, 584)
+)
+
+# Reshaping the data for ggplot2 to display values of each category. I created a grouped bar chart to depict the data in an alternative way which may be more legible for some audiences. 
+library(tidyr)
+Continent_data_long <- gather(Continent_data, key = "variable", value = "value", -continent)
+
+# Create the grouped bar chart. I used log to better visualize the data so it was more understandable and easier to read.
+ggplot(Continent_data_long, aes(x = continent, y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Grouped Bar Chart with Logarithmic Scale of total frequencies by each continent",
+       x = "Continent", y = "Frequency Count", fill = "Genus of Mosquito") +
+  scale_y_log10() +
+  scale_fill_manual(values = c("malaria" = "blue", "plasmodium" = "black", "anopheles" = "purple")) +
+  theme_minimal()
+
 # Show sampled vs unsampled of plasmodium and anopheles per continent and create pie chart
 total.Count.Continent <- total.Frequency %>%
     group_by(continent) %>%
