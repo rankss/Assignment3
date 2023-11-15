@@ -61,11 +61,11 @@ plot_ly(total.Frequency.Continent) %>%
     add_pie(total.Frequency.Continent, labels=~continent, values=~anopheles, sort=FALSE,
             domain=list(x=c(0.34, 0.66), y=c(0.34, 0.66)))
 
-library(ggplot2)
 
-# Create the data frame of frequencies from each genus and their respective continents. 
+##Create the data frame of frequencies from each genus and their respective continents. 
+library(ggplot2)
 Continent_data <- data.frame(
-  continent = c("Africa", "Americas", "Asia", "Oceania"),
+  continent = c("Africa","Americas","Asia", "Oceania"),
   malaria = c(163875665, 524158, 1247499, 736424),
   plasmodium = c(178, 190, 375, 278),
   anopheles = c(1813, 3847, 2916, 584)
@@ -84,21 +84,33 @@ ggplot(Continent_data_long, aes(x = continent, y = value, fill = variable)) +
   scale_fill_manual(values = c("malaria" = "blue", "plasmodium" = "black", "anopheles" = "purple")) +
   theme_minimal()
 
-# Show sampled vs unsampled of plasmodium and anopheles per continent and create pie chart
+#Show unsampled of plasmodium and anopheles per continent and create pie chart. Edited so that there is a title along for the graph and a legend. Changed the trace titles to depict Anopheles vs Plasmodium. 
 total.Count.Continent <- total.Frequency %>%
-    group_by(continent) %>%
-    summarise(unsampledPlasmodium=sum(is.na(plasmodium)),
-              unsampledAnopheles=sum(is.na(anopheles)),
-              .groups='drop') %>%
-    as.data.frame() %>%
-    filter(unsampledPlasmodium > 0) %>%
-    filter(unsampledAnopheles > 0)
+  group_by(continent) %>%
+  summarise(unsampledPlasmodium=sum(is.na(plasmodium)),
+            unsampledAnopheles=sum(is.na(anopheles)),
+            .groups='drop') %>%
+  as.data.frame() %>%
+  filter(unsampledPlasmodium > 0) %>%
+  filter(unsampledAnopheles > 0)
 
 plot_ly(total.Count.Continent) %>%
-    add_pie(labels=~continent, values=~unsampledPlasmodium, type='pie', hole=0.505, sort=FALSE) %>%
-    add_pie(total.Count.Continent, labels=~continent, values=~unsampledAnopheles, 
-            domain=list(x=c(0.25, 0.75), y=c(0.25, 0.75)),
-            sort=FALSE)
+  add_pie(labels=~continent, values=~unsampledPlasmodium, type='pie', hole=0.505, sort=FALSE, name = "Plasmodium") %>%
+  add_pie(total.Count.Continent, labels=~continent, values=~unsampledAnopheles, 
+          domain=list(x=c(0.25, 0.75), y=c(0.25, 0.75)),
+          sort=FALSE, name = "Anopheles") %>%
+  layout(
+    title = "Nested Pie Chart of unsampled plasmodium and anopheles per continent",
+    showlegend = TRUE,
+    legend = list(
+      x = 7,
+      y = 0.5,
+      traceorder = "normal",
+      orientation = "v",
+      title = list( 
+        text = "Continents",
+        side = "top")))
+
 
 # Determine relationship between malaria occurrences and number of plasmodium and anopheles sampled
 plasmodium.Frequency.Filtered <- total.Frequency[!is.na(total.Frequency$plasmodium), c("country", "continent", "malaria", "plasmodium")]
