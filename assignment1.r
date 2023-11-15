@@ -45,21 +45,32 @@ total.Frequency$continent <- countrycode(sourcevar=total.Frequency$country,
                                          origin="country.name",
                                          destination="continent")
 
-# Dataframe of what percent of each continent is sampled, then create nested piechart
+# Dataframe of what percent of each continent is sampled, then create nested piechart. Labelled nested pie chart with title, legend and changed traces to display genus types.
 total.Frequency.Continent <- total.Frequency %>%
-    group_by(continent) %>%
-    summarise(malaria=sum(malaria, na.rm=TRUE),
-              plasmodium=sum(plasmodium, na.rm=TRUE),
-              anopheles=sum(anopheles, na.rm=TRUE),
-              .groups='drop') %>%
-    as.data.frame()
+  group_by(continent) %>%
+  summarise(malaria=sum(malaria, na.rm=TRUE),
+            plasmodium=sum(plasmodium, na.rm=TRUE),
+            anopheles=sum(anopheles, na.rm=TRUE),
+            .groups='drop') %>%
+  as.data.frame()
 
 plot_ly(total.Frequency.Continent) %>%
-    add_pie(labels=~continent, values=~malaria, type='pie', hole=0.660, sort=FALSE) %>%
-    add_pie(total.Frequency.Continent, labels=~continent, values=~plasmodium, type='pie', hole=0.505, sort=FALSE,
-            domain=list(x=c(0.175, 0.825), y=c(0.175, 0.825))) %>%
-    add_pie(total.Frequency.Continent, labels=~continent, values=~anopheles, sort=FALSE,
-            domain=list(x=c(0.34, 0.66), y=c(0.34, 0.66)))
+  add_pie(labels=~continent, values=~malaria, type='pie', hole=0.660, sort=FALSE, name = "Malaria") %>%
+  add_pie(total.Frequency.Continent, labels=~continent, values=~plasmodium, type='pie', hole=0.505, sort=FALSE, name = "Plasmodium",
+          domain=list(x=c(0.175, 0.825), y=c(0.175, 0.825))) %>%
+  add_pie(total.Frequency.Continent, labels=~continent, values=~anopheles, sort=FALSE, name = "Anopheles",
+          domain=list(x=c(0.34, 0.66), y=c(0.34, 0.66))) %>%
+  layout(
+    title = "Nested Pie Chart of sampled malaria, plasmodium, and anopheles per continent",
+    showlegend = TRUE,
+    legend = list(
+      x = 7,
+      y = 0.5,
+      traceorder = "normal",
+      orientation = "v",
+      title = list( 
+        text = "Continents",
+        side = "top")))
 
 
 ##Create the data frame of frequencies from each genus and their respective continents. 
